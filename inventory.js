@@ -2,7 +2,6 @@ const inventory = {
     "AC.1.12": { type: "Animal Costume", color: "Red", item: 12, status: "In Inventory", damaged: false, damageDescription: "" },
     // Add more inventory items here
 };
-
 // Initial inventory update
 updateInventory();
 
