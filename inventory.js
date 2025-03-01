@@ -55,7 +55,7 @@ function onScanSuccess(decodedText, decodedResult) {
 }
 
 let box;
-if (document.getElementById('qr-reader').offsetWidth > document.getElementById('qr-reader').offsetHeight){
+if (document.getElementById('qr-reader').getBoundingClientRect().width > document.getElementById('qr-reader').getBoundingClientRect().height){
     box = document.getElementById('qr-reader').getBoundingClientRect().height;
 } else{
     box = document.getElementById('qr-reader').getBoundingClientRect().width;
