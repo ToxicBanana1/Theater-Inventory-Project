@@ -55,10 +55,11 @@ function onScanSuccess(decodedText, decodedResult) {
     document.getElementById('tag').value = decodedText;
 }
 
+let box;
 if (document.getElementById('qr-reader').offsetWidth > document.getElementById('qr-reader').offsetHeight){
-    const qrbox = document.getElementById('qr-reader').offsetHeight;
+    box = document.getElementById('qr-reader').offsetHeight;
 } else{
-    const qrbox = document.getElementById('qr-reader').offsetWidth;
+    box = document.getElementById('qr-reader').offsetWidth;
 }
 
 const html5QrCode = new Html5Qrcode("qr-reader");
@@ -66,7 +67,7 @@ html5QrCode.start(
     { facingMode: "environment" },
     {
         fps: 10,
-        qrbox: qrbox / 2
+        qrbox: box / 2
     },
     onScanSuccess).catch(err => {
         console.error(`Error starting QR code scanner: ${err}`);
