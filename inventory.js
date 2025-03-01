@@ -59,8 +59,7 @@ const html5QrCode = new Html5Qrcode("qr-reader");
 html5QrCode.start(
     { facingMode: "environment" },
     {
-        fps: 10,
-        qrbox: window.screen.width / 2
+        fps: 10
     },
     onScanSuccess).catch(err => {
         console.error(`Error starting QR code scanner: ${err}`);
