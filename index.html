@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theater Inventory Catalog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #qr-reader {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+    </style>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+    <h1>Theater Inventory Catalog</h1>
+    <div class="form-group">
+        <label for="tag">Costume Tag:</label>
+        <input type="text" id="tag" placeholder="e.g., AC.1.12">
+    </div>
+
+    <div class="form-group">
+        <label for="action">Action:</label>
+        <select id="action">
+            <option value="checkout">Check Out</option>
+            <option value="return">Return</option>
+        </select>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const actionSelect = document.getElementById('action');
+                const damageDescriptionInput = document.getElementById('damageDescription');
+                const damageDescriptionLabel = document.querySelector('label[for="damageDescription"]');
+                
+                // Hide damage description input and label by default, show when return action is selected
+                damageDescriptionInput.style.display = 'none';
+                damageDescriptionLabel.style.display = 'none';
+
+                actionSelect.addEventListener('change', function() {
+                    if (actionSelect.value === "return") {
+                        damageDescriptionInput.style.display = 'block';
+                        damageDescriptionLabel.style.display = 'block';
+                    } else {
+                        damageDescriptionInput.style.display = 'none';
+                        damageDescriptionLabel.style.display = 'none';
+                    }
+                });
+            });
+        </script>
+    </div>
+
+    <div class="form-group">
+        <label for="damageDescription">Damage Description (Leave blank if undamaged or if previous damage is unchanged):</label>
+        <input type="text" id="damageDescription" placeholder="e.g., torn fabric">
+    </div>
+    <button onclick="processAction()">Submit</button>
+
+    <h2>Inventory Status</h2>
+    <ul id="inventory-list">
+        <!-- Inventory items will be listed here -->
+        <!-- (Don't manually add anything here) -->
+    </ul>
+
+    <div id="qr-reader"></div>
+
+    <script>
+        const typeDict = {
+            "AC": "Animal Costume",
+        };
+        const colorDict = {
+            1: "Red",
+
+        };
+        const inventory = {
+            "AC.1.12": { type: "Animal Costume", color: "Red", item: 12, status: "In Inventory", damaged: false, damageDescription: "" },
+            // Add more inventory items here
+        };
+
+        // Initial inventory update
+        updateInventory();
+
+        function processAction() {
+            const tag = document.getElementById('tag').value.toUpperCase();
+            const action = document.getElementById('action').value;
+            const damageDescription = document.getElementById('damageDescription').value;
+
+            if (inventory[tag]) {
+                // Displays to user the result of their action
+                if (action === "checkout" && inventory[tag].status === "In Inventory") {
+                    inventory[tag].status = "Checked Out";
+                    alert(`Costume ${tag} has been Checked Out.`);
+                } else if (action === "return" && inventory[tag].status === "Checked Out") {
+                    inventory[tag].status = "In Inventory";
+                    alert(`Costume ${tag} has been returned.`);
+
+                    // Update damage status and description, if applicable
+                    inventory[tag].damaged = damageDescription.trim() !== "" || inventory[tag].damaged;
+                    if (damageDescription.trim() !== '' || !inventory[tag].damaged) {
+                        inventory[tag].damageDescription = damageDescription.trim();
+                    }
+                } else if (action == "checkout" && inventory[tag].status === "Checked Out") {
+                    alert(`Costume ${tag} has already been Checked Out.`);
+                } else if (action == "return" && inventory[tag].status === "In Inventory") {
+                    alert(`Costume ${tag} is already in the inventory.`);
+                } else {
+                    alert(`An unforeseen error has occurred, please try again. (This shouldn't be possible) ${inventory[tag].status}`);
+                }
+            } else {
+                alert(`Costume ${tag} does not exist.`);
+            }
+
+            updateInventory();
+        }
+
+        function updateInventory() {
+            const inventoryList = document.getElementById('inventory-list');
+            inventoryList.innerHTML = '';
+
+            for (const tag in inventory) {
+                const item = inventory[tag];
+                const listItem = document.createElement('li');
+                listItem.textContent = `${tag}: ${item.type}, ${item.color}, Item ${item.item} - ${item.status}${item.damaged ? ', Damaged: ' + item.damageDescription : ''}`;
+                inventoryList.appendChild(listItem);
+            }
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById('tag').value = decodedText;
+        }
+
+        const html5QrCode = new Html5Qrcode("qr-reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: window.screen.width / 3
+            },
+            onScanSuccess).catch(err => {
+                console.error(`Error starting QR code scanner: ${err}`);
+            });
+    </script>
+</body>
+</html>
