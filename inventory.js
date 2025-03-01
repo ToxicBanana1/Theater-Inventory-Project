@@ -60,7 +60,7 @@ html5QrCode.start(
     { facingMode: "environment" },
     {
         fps: 10,
-        qrbox: 250
+        qrbox: window.screen.width / 2
     },
     onScanSuccess).catch(err => {
         console.error(`Error starting QR code scanner: ${err}`);
