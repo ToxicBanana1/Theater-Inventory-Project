@@ -60,6 +60,7 @@ if (document.getElementById('qr-reader').getBoundingClientRect().width > documen
 } else{
     box = document.getElementById('qr-reader').getBoundingClientRect().width;
 }
+console.log(box);
 
 const html5QrCode = new Html5Qrcode("qr-reader");
 html5QrCode.start(
