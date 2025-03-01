@@ -1,10 +1,3 @@
-const typeDict = {
-    "AC": "Animal Costume",
-};
-const colorDict = {
-    1: "Red",
-
-};
 const inventory = {
     "AC.1.12": { type: "Animal Costume", color: "Red", item: 12, status: "In Inventory", damaged: false, damageDescription: "" },
     // Add more inventory items here
@@ -67,7 +60,7 @@ html5QrCode.start(
     { facingMode: "environment" },
     {
         fps: 10,
-        qrbox: window.screen.width / 3
+        qrbox: 250
     },
     onScanSuccess).catch(err => {
         console.error(`Error starting QR code scanner: ${err}`);
