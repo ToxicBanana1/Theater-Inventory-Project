@@ -56,9 +56,9 @@ function onScanSuccess(decodedText, decodedResult) {
 
 let box;
 if (document.getElementById('qr-reader').offsetWidth > document.getElementById('qr-reader').offsetHeight){
-    box = document.getElementById('qr-reader').offsetHeight;
+    box = document.getElementById('qr-reader').getBoundingClientRect().height;
 } else{
-    box = document.getElementById('qr-reader').offsetWidth;
+    box = document.getElementById('qr-reader').getBoundingClientRect().width;
 }
 
 const html5QrCode = new Html5Qrcode("qr-reader");
