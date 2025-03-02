@@ -54,12 +54,18 @@ function onScanSuccess(decodedText, decodedResult) {
     document.getElementById('tag').value = decodedText;
 }
 
-const html5QrCode = new Html5Qrcode("qr-reader");
-html5QrCode.start(
-    { facingMode: "environment" },
-    {
-        fps: 10,
-    },
-    onScanSuccess).catch(err => {
-        console.error(`Error starting QR code scanner: ${err}`);
-    });
+let qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
+    let minEdgePercentage = 0.7; // 70%
+    let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+    let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+    return {
+        width: qrboxSize,
+        height: qrboxSize
+    };
+}
+
+let html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader",
+    { fps: 10, qrbox: qrboxFunction },
+    /* verbose= */ false);
+html5QrcodeScanner.render(onScanSuccess);
