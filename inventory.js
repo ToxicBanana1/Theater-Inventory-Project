@@ -66,6 +66,5 @@ let qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
 
 let html5QrcodeScanner = new Html5QrcodeScanner(
     "qr-reader",
-    { fps: 10, qrbox: qrboxFunction },
-    /* verbose= */ false);
+    { fps: 10, qrbox: qrboxFunction });
 html5QrcodeScanner.render(onScanSuccess);
