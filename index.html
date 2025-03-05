@@ -38,6 +38,7 @@
         }
     </style>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <h1>Theater Inventory Catalog</h1>
@@ -52,40 +53,8 @@
             <option value="checkout">Check Out</option>
             <option value="return">Return</option>
         </select>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const actionSelect = document.getElementById('action');
-                const damageDescriptionInput = document.getElementById('damageDescription');
-                const damageDescriptionLabel = document.querySelector('label[for="damageDescription"]');
-                
-                // Hide damage description input and label by default, show when return action is selected
-                damageDescriptionInput.style.display = 'none';
-                damageDescriptionLabel.style.display = 'none';
-
-                actionSelect.addEventListener('change', function() {
-                    if (actionSelect.value === "return") {
-                        damageDescriptionInput.style.display = 'block';
-                        damageDescriptionLabel.style.display = 'block';
-                    } else {
-                        damageDescriptionInput.style.display = 'none';
-                        damageDescriptionLabel.style.display = 'none';
-                    }
-                });
-            });
-        </script>
-    </div>
-
-    <div class="form-group">
-        <label for="damageDescription">Damage Description (Leave blank if undamaged or if previous damage is unchanged):</label>
-        <input type="text" id="damageDescription" placeholder="e.g., torn fabric">
     </div>
     <button onclick="processAction()">Submit</button>
-
-    <h2>Inventory Status</h2>
-    <ul id="inventory-list">
-        <!-- Inventory items will be listed here -->
-        <!-- (Don't manually add anything here) -->
-    </ul>
     <div id="qr-reader"></div>
     <script src="inventory.js"></script>
 </body>

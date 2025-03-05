@@ -1,70 +1,74 @@
 const inventory = {
-    "AC.1.12": { type: "Animal Costume", color: "Red", item: 12, status: "In Inventory", damaged: false, damageDescription: "" },
+    "AC.1.12": { type: "Animal Costume", color: "Red", item: 12, status: "In Inventory"},
     // Add more inventory items here
 };
-// Initial inventory update
+
 updateInventory();
 
 function processAction() {
     const tag = document.getElementById('tag').value.toUpperCase();
     const action = document.getElementById('action').value;
-    const damageDescription = document.getElementById('damageDescription').value;
 
-    if (inventory[tag]) {
-        // Displays to user the result of their action
-        if (action === "checkout" && inventory[tag].status === "In Inventory") {
-            inventory[tag].status = "Checked Out";
+    if (!inventory[tag]) {
+        return alert(`Costume ${tag} does not exist.`);
+    }
+
+    const item = inventory[tag];
+    if (action === "checkout") {
+        if (item.status === "In Inventory") {
+            item.status = "Checked Out";
             alert(`Costume ${tag} has been Checked Out.`);
-        } else if (action === "return" && inventory[tag].status === "Checked Out") {
-            inventory[tag].status = "In Inventory";
-            alert(`Costume ${tag} has been returned.`);
-
-            // Update damage status and description, if applicable
-            inventory[tag].damaged = damageDescription.trim() !== "" || inventory[tag].damaged;
-            if (damageDescription.trim() !== '' || !inventory[tag].damaged) {
-                inventory[tag].damageDescription = damageDescription.trim();
-            }
-        } else if (action == "checkout" && inventory[tag].status === "Checked Out") {
-            alert(`Costume ${tag} has already been Checked Out.`);
-        } else if (action == "return" && inventory[tag].status === "In Inventory") {
-            alert(`Costume ${tag} is already in the inventory.`);
         } else {
-            alert(`An unforeseen error has occurred, please try again. (This shouldn't be possible) ${inventory[tag].status}`);
+            alert(`Costume ${tag} has already been Checked Out.`);
+        }
+    } else if (action === "return") {
+        if (item.status === "Checked Out") {
+            item.status = "In Inventory";
+            alert(`Costume ${tag} has been returned.`);
+        } else {
+            alert(`Costume ${tag} is already in the inventory.`);
         }
     } else {
-        alert(`Costume ${tag} does not exist.`);
+        alert(`An unforeseen error has occurred, please try again. (This shouldn't be possible) ${item.status}`);
     }
 
     updateInventory();
 }
 
 function updateInventory() {
-    const inventoryList = document.getElementById('inventory-list');
-    inventoryList.innerHTML = '';
+    const spreadsheetId = '1ftHSFYK92nU51GhdS1t0xtxXcfh-MKld9bIliPbRAHk';
+    const yourAPIKey = 'AIzaSyBu7PLnTjSsyXvMS64mkVGaA8Px8uTBuqU';
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/?key=${yourAPIKey}&includeGridData=true`;
+    axios.get(url)
+    .then(function (response) {
+        let values = [];
+        let totalRows = response['data']['sheets'][0]['data'][0]['rowData'].length;
+        for (let row = 0; row < totalRows; row++) {
+            const rowData = response['data']['sheets'][0]['data'][0]['rowData'][row];
+            values.push(rowData['values']);
+        }
 
-    for (const tag in inventory) {
-        const item = inventory[tag];
-        const listItem = document.createElement('li');
-        listItem.textContent = `${tag}: ${item.type}, ${item.color}, Item ${item.item} - ${item.status}${item.damaged ? ', Damaged: ' + item.damageDescription : ''}`;
-        inventoryList.appendChild(listItem);
-    }
+        let columns = [];
+        for (let i = 0; i < values[0].length; i++) {
+            columns.push(values.map(row => row[i] ? row[i].formattedValue : ''));
+        }
+        
+        console.log(columns);
+    })
+    .catch(function (error) {
+        console.log(error);                                                                                                                                                       
+    }); 
 }
 
-function onScanSuccess(decodedText, decodedResult) {
+function onScanSuccess(decodedText) {
     document.getElementById('tag').value = decodedText;
 }
 
-let qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
-    let minEdgePercentage = 0.7; // 70%
-    let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-    let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
-    return {
-        width: qrboxSize,
-        height: qrboxSize
-    };
-}
+const qrboxFunction = (viewfinderWidth, viewfinderHeight) => {
+    const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+    const qrboxSize = Math.floor(minEdgeSize * 0.7);
+    return { width: qrboxSize, height: qrboxSize };
+};
 
-let html5QrcodeScanner = new Html5QrcodeScanner(
-    "qr-reader",
-    { fps: 10, qrbox: qrboxFunction });
+const html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: qrboxFunction });
 html5QrcodeScanner.render(onScanSuccess);
