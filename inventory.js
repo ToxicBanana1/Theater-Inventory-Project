@@ -36,8 +36,8 @@ function processAction() {
 }
 
 function updateInventory() {
-    const spreadsheetId = '1ftHSFYK92nU51GhdS1t0xtxXcfh-MKld9bIliPbRAHk';
-    const yourAPIKey = 'AIzaSyBu7PLnTjSsyXvMS64mkVGaA8Px8uTBuqU';
+    const spreadsheetId = process.env.SPREADSHEET_ID;
+    const yourAPIKey = process.env.YOUR_API_KEY;
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/?key=${yourAPIKey}&includeGridData=true`;
     axios.get(url)
     .then(function (response) {
